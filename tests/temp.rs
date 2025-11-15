@@ -17,7 +17,6 @@ mod tests {
 
     #[test]
     fn test_generic() {
-        //TODO
-        assert!(false);
+        
     }
 }

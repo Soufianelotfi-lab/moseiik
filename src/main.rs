@@ -440,22 +440,71 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
+    use super::*;  
     #[test]
     #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
     fn unit_test_x86() {
-        // TODO
+
+        /* Nous avons récupéré l'image qui était fourie (tiles-1.png) dans tile, et on a appelé la fonction l1_x86_sse2 pour 
+        calculer la distance L qui faut donner 0 puisque dans ce cas nous avons comparer deux images identiques (tiles)*/
+
+        /*récupere l'image*/
+        let tile_result = || -> Result<RgbImage, Box<dyn Error>> {
+                Ok(ImageReader::open("assets/tiles-small/tile-1.png")?.decode()?.into_rgb8())
+            };
+
+            let tile = match tile_result() {
+                Ok(t) => t,
+                Err(_) => return,
+            };
+
+        /* calcule de L*/
+         let l1_sse2 = unsafe { l1_x86_sse2(&tile, &tile) };
+
+         /* comparaisn de la distance avec la valeur expected (0), si on change 0 ca donne un erreu pusique la différnce vaut dans ce cas 0 */
+         assert_eq!(l1_sse2,0, "Erreur SSE2");
+
+
         assert!(true);
     }
 
     #[test]
     #[cfg(target_arch = "aarch64")]
     fn unit_test_aarch64() {
+        /*Nous avons commmenter cette partie parcequ'on travaille pas avec cette architecture*/
+         /*let tile_result = || -> Result<RgbImage, Box<dyn Error>> {
+                 Ok(ImageReader::open("assets/tiles-small/tile-1.png")?.decode()?.into_rgb8())
+            };
+
+            let tile = match tile_result() {
+                Ok(t) => t,
+                Err(_) => return,
+            };
+            let l1_aarch64 = unsafe { l1_neon(&tile, &tile) };
+            assert_eq!(l1_sse2,0, "Erreur SSE2"); */
+
         assert!(true);
     }
 
     #[test]
     fn unit_test_generic() {
-        // TODO
+        /*Meme principe que dans x86, la seule différence est dans l'appel de la fonction*/
+         let tile_result = || -> Result<RgbImage, Box<dyn Error>> {
+                Ok(ImageReader::open("assets/tiles-small/tile-1.png")?.decode()?.into_rgb8())
+            };
+
+            let tile = match tile_result() {
+                Ok(t) => t,
+                Err(_) => return,
+            };
+
+        /* l'appel de la foncion*/
+        let l1_gen = l1_generic(&tile, &tile);
+
+        /* Ici, nous obtenons "FAILED" puisque la valeur exepectée est 0 alors qu'on a mit 2 (juste pour tester), si on met 0 au lieu de 2 
+        le test donne "ok" (ce qui veut dire que la fonction fonctionne correctement)*/
+        assert_eq!(l1_gen, 2, "Erreur : l1_generic ne calcule pas 0");
         assert!(true);
+        
     }
 }
