@@ -505,6 +505,61 @@ mod tests {
         le test donne "ok" (ce qui veut dire que la fonction fonctionne correctement)*/
         assert_eq!(l1_gen, 2, "Erreur : l1_generic ne calcule pas 0");
         assert!(true);
-        
     }
+
+
+    #[test]
+    fn unit_test_prepare_target() {
+            let tile_result = || -> Result<RgbImage, Box<dyn Error>> {
+                Ok(ImageReader::open("assets/kit.jpeg")?.decode()?.into_rgb8())
+            };
+
+            let target = match tile_result() {
+                Ok(t) => t,
+                Err(_) => return,
+            };
+
+        let t_size= Size {width : 4 , height: 4};
+        
+        let P_target = match prepare_target( "assets/kit.jpeg" ,3, &t_size){
+            Ok (t)=> t,
+            Err(_)=> return,
+        };
+        
+        assert_eq! (P_target.width() , target.width()*3- target.width()*3 % t_size.width, "erreur de valeur") ;
+        assert_eq! (P_target.height(), target.height()*3 - target.height()*3 % t_size.height, "erreur de valeur");
+
+
+
+
+        assert!(true);
+    }
+
+
+    #[test]
+    fn unit_test_prepare_tiles() {
+
+        let tile_s = Size {width: 3 , height : 3};
+        let tile_s1 = Size {width: 5 , height : 5};
+        let T_target =  match prepare_tiles ("assets/tiles-small",&tile_s,true)
+        {
+            Ok (t)=> t,
+            Err(_)=> return,
+        };
+
+        
+        assert_eq! (T_target[0].width(), tile_s.width);
+        assert_eq! (T_target[0].height(), tile_s.height);
+
+        let T_target =  match prepare_tiles ("assets/tiles-small",&tile_s1,true)
+        {
+            Ok (t)=> t,
+            Err(_)=> return,
+        };
+
+        assert_eq! (T_target[0].width(), tile_s1.width);
+        assert_eq! (T_target[0].height(), tile_s1.height);
+        assert!(true);
+    }
+        
 }
