@@ -448,24 +448,34 @@ mod tests {
         /* Nous avons récupéré l'image qui était fourie (tiles-1.png) dans tile, et on a appelé la fonction l1_x86_sse2 pour 
         calculer la distance L qui faut donner 0 puisque dans ce cas nous avons comparer deux images identiques (tiles)*/
 
-        /*récupere l'image*/
+        /*récupere l'image tile 1*/
         let tile_result = || -> Result<RgbImage, Box<dyn Error>> {
                 Ok(ImageReader::open("assets/tiles-small/tile-1.png")?.decode()?.into_rgb8())
             };
 
-            let tile = match tile_result() {
+        let tile_1 = match tile_result() {
                 Ok(t) => t,
                 Err(_) => return,
             };
 
+        /*récupere l'image tile 2*/
+        let tile_result = || -> Result<RgbImage, Box<dyn Error>> {
+                Ok(ImageReader::open("assets/tiles-small/tile-2.png")?.decode()?.into_rgb8())
+            };
+        let tile_2 = match tile_result() {
+                Ok(t) => t,
+                Err(_) => return,
+            };    
+
         /* calcule de L*/
-         let l1_sse2 = unsafe { l1_x86_sse2(&tile, &tile) };
+        let l1_sse2 = unsafe { l1_x86_sse2(&tile_1, &tile_1) };
+        let l2_sse2 = unsafe { l1_x86_sse2(&tile_1, &tile_2) };
 
          /* comparaisn de la distance avec la valeur expected (0), si on change 0 ca donne un erreu pusique la différnce vaut dans ce cas 0 */
          assert_eq!(l1_sse2,0, "Erreur SSE2");
+         assert_eq!(l2_sse2,2154, "Erreur SSE2");
 
-
-        assert!(true);
+         assert!(true);
     }
 
     #[test]
@@ -503,13 +513,14 @@ mod tests {
 
         /* Ici, nous obtenons "FAILED" puisque la valeur exepectée est 0 alors qu'on a mit 2 (juste pour tester), si on met 0 au lieu de 2 
         le test donne "ok" (ce qui veut dire que la fonction fonctionne correctement)*/
-        assert_eq!(l1_gen, 2, "Erreur : l1_generic ne calcule pas 0");
+        assert_eq!(l1_gen, 0, "Erreur : l1_generic ne calcule pas 0");
         assert!(true);
     }
 
 
     #[test]
     fn unit_test_prepare_target() {
+        /*Récupere l'image kit.jpeg */
             let tile_result = || -> Result<RgbImage, Box<dyn Error>> {
                 Ok(ImageReader::open("assets/kit.jpeg")?.decode()?.into_rgb8())
             };
@@ -518,16 +529,17 @@ mod tests {
                 Ok(t) => t,
                 Err(_) => return,
             };
-
+        /*Le tile_size qu'on va appeler dans nla fonction prepare target */
         let t_size= Size {width : 4 , height: 4};
-        
+
+        /*L'appel de la fonction */ 
         let P_target = match prepare_target( "assets/kit.jpeg" ,3, &t_size){
             Ok (t)=> t,
             Err(_)=> return,
         };
-        
-        assert_eq! (P_target.width() , target.width()*3- target.width()*3 % t_size.width, "erreur de valeur") ;
-        assert_eq! (P_target.height(), target.height()*3 - target.height()*3 % t_size.height, "erreur de valeur");
+        /*Pour tester si la fonction fonctionne correctement, il doit rendre le meme résulte que l'eqution qu'on a ecrit et donc le test doit  donner "ok*/
+        assert_eq! (P_target.width() , target.width()*4- target.width()*4 % t_size.width, "erreur de valeur") ;
+        assert_eq! (P_target.height(), target.height()*4 - target.height()*4 % t_size.height, "erreur de valeur");
 
 
 
@@ -538,27 +550,34 @@ mod tests {
 
     #[test]
     fn unit_test_prepare_tiles() {
-
+        //Test de prepare_tile pour des image de taille 5x5
+        // Variable pour le test de la taille, avec size = 3x3 pour tiles plus petite    
         let tile_s = Size {width: 3 , height : 3};
-        let tile_s1 = Size {width: 5 , height : 5};
+        //Variable pour le test de taille, avec size = 8x8 pour tiles plus grande
+        let tile_s1 = Size {width: 8 , height : 8};
+
+        //Appelle de la fonction prepare_tiles avec size 3x3
         let T_target =  match prepare_tiles ("assets/tiles-small",&tile_s,true)
         {
             Ok (t)=> t,
             Err(_)=> return,
         };
 
-        
+        // Test pour taille 3x3
         assert_eq! (T_target[0].width(), tile_s.width);
         assert_eq! (T_target[0].height(), tile_s.height);
-
+        
+        //Appelle de la fonction prepare_tiles avec size 8x8
         let T_target =  match prepare_tiles ("assets/tiles-small",&tile_s1,true)
         {
             Ok (t)=> t,
             Err(_)=> return,
         };
 
+        // Test pour taille 8x8
         assert_eq! (T_target[0].width(), tile_s1.width);
         assert_eq! (T_target[0].height(), tile_s1.height);
+
         assert!(true);
     }
         
