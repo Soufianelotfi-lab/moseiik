@@ -19,7 +19,7 @@ mod tests {
 fn test_x86() {
     let param = Options {image : "assets/kit.jpeg".to_string() ,
         output : "out.png".to_string(), 
-        tiles : "assets/tiles-small/images".to_string(), 
+        tiles : "assets/images".to_string(), 
         tile_size : 25,
         scaling : 1,
         remove_used : false,
@@ -62,7 +62,7 @@ fn test_x86() {
 fn test_aarch64() {
     let param = Options {image : "assets/kit.jpeg".to_string() ,
         output : "out.png".to_string(), 
-        tiles : "assets/tiles-small/images".to_string(), 
+        tiles : "assets/images".to_string(), 
         tile_size : 25,
         scaling : 1,
         remove_used : false,

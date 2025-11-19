@@ -491,7 +491,7 @@ mod tests {
                 Err(_) => return,
             };
             let l1_aarch64 = unsafe { l1_neon(&tile, &tile) };
-            assert_eq!(l1_sse2,0, "Erreur SSE2"); */
+            assert_eq!(l1_aarch64,0, "Erreur SSE2"); */
 
         assert!(true);
     }
@@ -533,7 +533,7 @@ mod tests {
         let t_size= Size {width : 4 , height: 4};
 
         /*L'appel de la fonction */ 
-        let P_target = match prepare_target( "assets/kit.jpeg" ,3, &t_size){
+        let P_target = match prepare_target( "assets/kit.jpeg" ,4, &t_size){
             Ok (t)=> t,
             Err(_)=> return,
         };
