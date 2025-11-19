@@ -1,0 +1,38 @@
+name: MOSEIK_MULTI_ARCH
+
+on :
+  push:
+    branches : [ main , V1]
+  pull_request :
+jobs:
+  test:
+    name : TEST_DOCKER
+    runs-on : ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [amd64,arm64]
+
+    steps:
+      - name: RECUP_CODE_SOURCE
+        uses: actions/checkout@v4 
+
+      - name: QEMU_POUR_ARCHI_ARM64
+        if: matrix.arch == 'arm64'
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: linux/arm64
+
+      - name : DOCKER_BUILDX
+        uses: docker/setup-buildx-action@v3 
+
+      - name: BUILD_PAR_DOCKER
+        run :  |
+          docker buildx build \
+            --platform linux/${{matrix.arch]}}\   
+            -t moseiik:${{matrix.arch}}\
+            --load .
+      - name : EXECUTION_IMAGE
+        run: docker run --rm moseiik:${{matrix.arch}}
+      
+  
