@@ -29,9 +29,9 @@ jobs:
       - name: BUILD_PAR_DOCKER
         run :  |
           docker buildx build \
-            --platform linux/${{matrix.arch}}\   
-            -t moseiik:${{matrix.arch}}\
-            --load .
+          --platform linux/${{ matrix.arch }} \
+          -t moseiik:${{ matrix.arch }} \
+          --load .
       - name : EXECUTION_IMAGE
         run: docker run --rm moseiik:${{matrix.arch}}
       
