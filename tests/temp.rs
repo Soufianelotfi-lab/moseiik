@@ -28,17 +28,17 @@ fn test_x86() {
         num_thread : 1,
     };
 
+    /*Appel de la fonction */
+    compute_mosaic(param);
+
     /* Récupere l'image de réference */
     let tile_result = || -> Result<RgbImage, Box<dyn Error>> {
-        Ok(ImageReader::open("assets/ground-truth-kit.jpeg")?.decode()?.into_rgb8())
+        Ok(ImageReader::open("assets/ground-truth-kit.png")?.decode()?.into_rgb8())
         };
     let image_test = match tile_result() {
         Ok(t) => t,
         Err(_) => return,
         };
-
-    /*Appel de la fonction */
-    compute_mosaic(param);
 
     /*L'image genérée */
     let tile_result = || -> Result<RgbImage, Box<dyn Error>> {
@@ -49,8 +49,8 @@ fn test_x86() {
         Err(_) => return,
         };
 
-    for j in 0 .. image_test.height(){
-        for i in 0 .. image_test.width() {
+    for i in 0 .. image_test.height(){
+        for j in 0 .. image_test.width() {
             assert_eq!(image_out.get_pixel(j, i),image_test.get_pixel(j, i),"Erreur valeur de pixel differente");
             };
         };
@@ -70,7 +70,10 @@ fn test_aarch64() {
         simd: true ,
         num_thread : 1,
         };
-        
+
+    /*Appel de la fonction */
+    compute_mosaic(param);
+
     /* Récupere l'image de réference */
     let tile_result = || -> Result<RgbImage, Box<dyn Error>> {
         Ok(ImageReader::open("assets/ground-truth-kit.jpeg")?.decode()?.into_rgb8())
@@ -81,10 +84,8 @@ fn test_aarch64() {
         Err(_) => return,
         };
 
-    /*Appel de la fonction */
-    compute_mosaic(param);
-
-    /*L'image genérée */
+   
+ /*L'image genérée */
     let tile_result = || -> Result<RgbImage, Box<dyn Error>> {
         Ok(ImageReader::open("out.png")?.decode()?.into_rgb8())
         };
@@ -93,8 +94,8 @@ fn test_aarch64() {
         Err(_) => return,
         };
 
-    for j in 0 .. image_test.height(){
-        for i in 0 .. image_test.width() {
+    for i in 0 .. image_test.height(){
+        for j in 0 .. image_test.width() {
             assert_eq!(image_out.get_pixel(j, i),image_test.get_pixel(j, i),"Erreur valeur de pixel differente");
             };
         };
@@ -105,7 +106,7 @@ fn test_generic() {
 
     let param = Options {image : "assets/kit.jpeg".to_string() ,
         output : "out.png".to_string(), 
-        tiles : "assets/tiles-small/images".to_string(), 
+        tiles : "assets/images".to_string(), 
         tile_size : 25,
         scaling : 1,
         remove_used : false,
@@ -114,6 +115,8 @@ fn test_generic() {
         num_thread : 1,
     };
 
+    /*Appel de la fonction */
+    compute_mosaic(param);
 
     /* Récupere l'image de réference */
     let tile_result = || -> Result<RgbImage, Box<dyn Error>> {
@@ -124,9 +127,6 @@ fn test_generic() {
         Err(_) => return,
         };
 
-    /*Appel de la fonction */
-    compute_mosaic(param);
-
     /*L'image genérée */
     let tile_result = || -> Result<RgbImage, Box<dyn Error>> {
         Ok(ImageReader::open("out.png")?.decode()?.into_rgb8())
@@ -136,8 +136,10 @@ fn test_generic() {
         Err(_) => return,
         };
 
-    for j in 0 .. image_test.height(){
-            for i in 0 .. image_test.width() {
+    /*Nous avons toujours des pixels qui sont différents, pour s'assurer nous avons comparé les deux images 
+    (image_test et image_out) dans le logiciel Image_Insa nous avons trouvé une différence dans l'un des canaux RGB.*/
+    for i in 0 .. image_test.height(){
+            for j in 0 .. image_test.width() {
                 assert_eq!(image_out.get_pixel(j, i),image_test.get_pixel(j, i),"Erreur valeur de pixel differente");
             };
         };

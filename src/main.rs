@@ -481,8 +481,8 @@ mod tests {
     #[test]
     #[cfg(target_arch = "aarch64")]
     fn unit_test_aarch64() {
-        /*Nous avons commmenter cette partie parcequ'on travaille pas avec cette architecture*/
-         /*let tile_result = || -> Result<RgbImage, Box<dyn Error>> {
+        /*Nous commmentons cette partie lorsqu'on travaille pas avec cette architecture*/
+         let tile_result = || -> Result<RgbImage, Box<dyn Error>> {
                  Ok(ImageReader::open("assets/tiles-small/tile-1.png")?.decode()?.into_rgb8())
             };
 
@@ -491,7 +491,7 @@ mod tests {
                 Err(_) => return,
             };
             let l1_aarch64 = unsafe { l1_neon(&tile, &tile) };
-            assert_eq!(l1_aarch64,0, "Erreur SSE2"); */
+            assert_eq!(l1_aarch64,0, "Erreur SSE2"); 
 
         assert!(true);
     }
