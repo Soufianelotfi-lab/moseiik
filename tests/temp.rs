@@ -40,7 +40,7 @@ fn test_x86() {
         Err(_) => return,
         };
 
-    /*L'image genérée */
+    /*Recupere L'image genérée */
     let tile_result = || -> Result<RgbImage, Box<dyn Error>> {
         Ok(ImageReader::open("out.png")?.decode()?.into_rgb8())
         };
@@ -48,12 +48,15 @@ fn test_x86() {
         Ok(t) => t,
         Err(_) => return,
         };
-
+    /*Test de comparaison pixel par pixel */
+    /*Nous avons toujours des pixels qui sont différents, pour s'assurer nous avons comparé les deux images 
+    (image_test et image_out) dans le logiciel Image_Insa nous avons trouvé une différence dans l'un des canaux RGB.*/
+    /*Le première différence est à la position (1892,2), on peut remarquer que l'image est similaire à celle testée mais certaine tiles sont différente comme la tile présente au coin supérieur droit de l'image */ 
     for i in 0 .. image_test.height(){
         for j in 0 .. image_test.width() {
-            assert_eq!(image_out.get_pixel(j, i),image_test.get_pixel(j, i),"Erreur valeur de pixel differente");
+            assert_eq!(image_out.get_pixel(j, i),image_test.get_pixel(j, i),"Erreur valeur de pixel differente a position x={}, y={}",j,i);
             };
-        };
+        };   
     }
 
 
@@ -93,10 +96,11 @@ fn test_aarch64() {
         Ok(t) => t,
         Err(_) => return,
         };
-
+    /*Test de comparaison pixel par pixel */ 
+       
     for i in 0 .. image_test.height(){
         for j in 0 .. image_test.width() {
-            assert_eq!(image_out.get_pixel(j, i),image_test.get_pixel(j, i),"Erreur valeur de pixel differente");
+            assert_eq!(image_out.get_pixel(j, i),image_test.get_pixel(j, i),"Erreur valeur de pixel differente a position x= {}, y= {}",j,i);
             };
         };
     }
@@ -136,11 +140,10 @@ fn test_generic() {
         Err(_) => return,
         };
 
-    /*Nous avons toujours des pixels qui sont différents, pour s'assurer nous avons comparé les deux images 
-    (image_test et image_out) dans le logiciel Image_Insa nous avons trouvé une différence dans l'un des canaux RGB.*/
+    /*Test de comparaison pixel par pixel */
     for i in 0 .. image_test.height(){
             for j in 0 .. image_test.width() {
-                assert_eq!(image_out.get_pixel(j, i),image_test.get_pixel(j, i),"Erreur valeur de pixel differente");
+                assert_eq!(image_out.get_pixel(j, i),image_test.get_pixel(j, i),"Erreur valeur de pixel differente a position x={}, y={}",j,i);
             };
         };
     }
